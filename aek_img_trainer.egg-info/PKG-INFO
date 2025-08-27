@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: aek-img-trainer
-Version: 0.4.4
+Version: 0.4.7
 Summary: Image classification trainer using OpenCV and timm
 Author: Alp Emre Karaahmet
 Author-email: alpemrekaraahmet@gmail.com
@@ -22,6 +22,16 @@ Dynamic: license-file
 Dynamic: requires-dist
 Dynamic: requires-python
 Dynamic: summary
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/alpemre8/aek-img-trainer/main/logo.png" alt="AEK Image Trainer Logo" width="400"/>
+  
+  # AEK Image Trainer
+  
+  AI image preprocessing library 
+</div>
+
+
 
 # Installation
 

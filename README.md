@@ -1,12 +1,11 @@
 <div align="center">
-  <img src="logo.png" alt="AEK Image Trainer Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/alpemre8/aek-img-trainer/main/logo.png" alt="AEK Image Trainer Logo" width="400"/>
   
   # AEK Image Trainer
   
   AI image preprocessing library 
 </div>
 
----
 
 
 # Installation
