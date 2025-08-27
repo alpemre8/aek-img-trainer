@@ -479,7 +479,7 @@ class Trainer:
                 print(f"  Class {idx}: {pct}")
     
 
-    def savexml(self, pth_path, output_path, class_number=16, model_name="efficientnet_b0"):
+    def save_openvino(self, pth_path, output_path, class_number=16, model_name="efficientnet_b0"):
         """
         Converts pth file to xml file and saves it.
 
@@ -527,7 +527,7 @@ class Trainer:
         e_x = np.exp(x - np.max(x))
         return e_x / np.sum(e_x, axis=-1, keepdims=True)
     
-    def predict_xml(self, xml_path, bin_path, test_path=None, test_set_path=None):
+    def openvino_predict(self, xml_path, bin_path, test_path=None, test_set_path=None):
         """
         Predicts using OpenVINO XML model on single image or test dataset.
 
