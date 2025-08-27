@@ -82,7 +82,12 @@ You can save the pth model file to xml and bin files
 Example usage:
 
 ```python
-model.savexml(pth_path="efnet.pth", output_path="efnet.xml", class_number=16, model_name="efficientnet_b0")
+model.savexml(
+    pth_path="enfet.pth",
+    output_path="enfet.xml",
+    class_number=16,
+    model_name="efficientnet_b0"
+)
 ```
 
 
@@ -94,7 +99,12 @@ You can predict the model with xml and bin files. Like above predict function pr
 Example usage:
 
 ```python
-model.predict_xml(xml_path="enfet.xml", bin_path="efnet.bin", test_path=None, test_set_path="root/testset")
+model.predict_xml(
+    xml_path="efnet.xml",
+    bin_path="efnet.bin",
+    test_path=None,
+    test_set_path="root/testset"
+)
 ```
 
 
