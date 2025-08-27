@@ -94,7 +94,7 @@ model.save_openvino(
 # Prediction on OpenVINO IR Model
 
 
-You can predict the OpenVINO IR model. Like above predict function predict_xml takes either test_path or test_set_path and changes the result with the given path, either predict one image or images that inside the test set. Test set should be labelled like a training dataset.
+You can predict the OpenVINO IR model. Like above predict function openvino_predict function takes either test_path or test_set_path and changes the result with the given path, either predict one image or images that inside the test set. Test set should be labelled like a training dataset.
 
 Example usage:
 
