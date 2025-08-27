@@ -9,6 +9,8 @@ import numpy as np
 import time
 import timm
 import random
+import openvino as ov
+from openvino.runtime import Core
 
 
 class Preprocessor:
@@ -475,8 +477,125 @@ class Trainer:
             print("Class probabilities (%):")
             for idx, pct in enumerate(percentages_str):
                 print(f"  Class {idx}: {pct}")
+    
 
-        
+    def savexml(self, pth_path, output_path, class_number=16, model_name="efficientnet_b0"):
+        """
+        Converts pth file to xml file and saves it.
+
+        Args:
+        pth_path (str): Path of the pth file.
+        output_path (str): Path to save xml file.
+        class_number (int): Class number for classification problem.
+        model_name (str): Model name for creating a model architecture from timm.
+
+        Returns:
+        str: Path to created xml file or None if any error occurs.
+        """
+        model = timm.create_model(model_name, pretrained=False)
+        model.classifier = torch.nn.Linear(model.classifier.in_features, class_number)
+        model.load_state_dict(torch.load(pth_path))
+        model.eval()
+
+        example_input = torch.randn(1, 3, 224, 224)
+        ov_model = ov.convert_model(model, example_input=example_input)
+        ov.save_model(ov_model, output_path)
+    
+    def _preprocess_blob_cv(self, img):
+        """
+        Preprocess image using cv2.dnn.blobFromImage to mimic PyTorch:
+        - Resize to 224x224
+        - Scale factor 2/255
+        - Mean subtraction 1.0
+        - Swap BGR->RGB
+        - No crop
+        """
+        blob = cv2.dnn.blobFromImage(
+            image=img,
+            scalefactor=2.0/255.0,
+            size=(224, 224),
+            mean=(1.0, 1.0, 1.0),
+            swapRB=True,
+            crop=False
+        )
+        return blob
+    
+    def _softmax(self, x):
+        """
+        Apply softmax to get probabilities.
+        """
+        e_x = np.exp(x - np.max(x))
+        return e_x / np.sum(e_x, axis=-1, keepdims=True)
+    
+    def predict_xml(self, xml_path, bin_path, test_path=None, test_set_path=None):
+        """
+        Predicts using OpenVINO XML model on single image or test dataset.
+
+        Args:
+            xml_path (str): Path to xml model file.
+            bin_path (str): Path to bin weight file.
+            test_path (str, optional): Path to single test image.
+            test_set_path (str, optional): Path to test dataset directory.
+
+        Returns:
+            None: Prints prediction results.
+        """
+        core = Core()
+        model = core.read_model(xml_path, bin_path)
+        compiled_model = core.compile_model(model, "CPU")
+        output_layer = compiled_model.output(0)
+
+        if test_set_path is not None:
+            correct, total = 0, 0
+            wrong_images = []
+
+            class_to_idx = {c: idx for idx, c in enumerate(sorted(os.listdir(test_set_path))) if os.path.isdir(os.path.join(test_set_path, c))}
+            idx_to_class = {v: k for k, v in class_to_idx.items()}
+
+            for class_name, idx in class_to_idx.items():
+                class_folder = os.path.join(test_set_path, class_name)
+                for fname in os.listdir(class_folder):
+                    if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
+                        continue
+                    img_path = os.path.join(class_folder, fname)
+                    img = cv2.imread(img_path)
+                    if img is None:
+                        print(f"Warning: Could not read {img_path}, skipping.")
+                        continue
+
+                    img_blob = self._preprocess_blob_cv(img)
+                    result = compiled_model([img_blob])[output_layer]
+                    result = np.squeeze(result)
+                    probs = self._softmax(result)
+                    pred = int(np.argmax(probs))
+
+                    total += 1
+                    if pred == idx:
+                        correct += 1
+                    else:
+                        wrong_images.append((class_name, fname, pred, idx_to_class[pred]))
+            
+            acc = correct / total if total > 0 else 0
+            print(f"Test set evaluation: {correct}/{total} correct. Accuracy: {acc*100:.2f}%")
+
+            if wrong_images:
+                print("\nWrong predicted images:")
+                for real_class, fname, pred_idx, pred_class_name in wrong_images:
+                    print(f"  Actual class: {real_class}, File: {fname}, Predicted class: {pred_idx} ({pred_class_name})")
+
+            elif test_path is not None:
+                img = cv2.imread(test_path)
+                if img is None:
+                    raise ValueError(f"Could not read image from {test_path}")
+                img_blob = self._preprocess_blob_cv(img)
+                result = compiled_model([img_blob])[output_layer]
+                result = np.squeeze(result)
+                probs = self._softmax(result)
+                pred = int(np.argmax(probs))
+
+                print(f"Predicted class index: {pred}")
+                for idx, pct in enumerate(probs*100):
+                    print(f"   Class {idx}: {pct:.2f}%")
 
     def help(self):
         """

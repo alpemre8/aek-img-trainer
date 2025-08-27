@@ -74,6 +74,31 @@ model.predict(checkpoint_path="example_model.pth",
                 test_set_path="root/testset")
 ```
 
+# Save XML
+
+
+You can save the pth model file to xml and bin files 
+
+Example usage:
+
+```python
+model.savexml(pth_path="efnet.pth", output_path="efnet.xml", class_number=16, model_name="efficientnet_b0")
+```
+
+
+# Prediction on XML file
+
+
+You can predict the model with xml and bin files. Like above predict function predict_xml takes either test_path or test_set_path and changes the result with the given path, either predict one image or images that inside the test set. Test set should be labelled like a training dataset.
+
+Example usage:
+
+```python
+model.predict_xml(xml_path="enfet.xml", bin_path="efnet.bin", test_path=None, test_set_path="root/testset")
+```
+
+
+
 # Information
 
 
