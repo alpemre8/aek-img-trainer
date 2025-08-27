@@ -1,3 +1,14 @@
+<div align="center">
+  <img src="logo.png" alt="AEK Image Trainer Logo" width="200"/>
+  
+  # AEK Image Trainer
+  
+  AI image preprocessing library 
+</div>
+
+---
+
+
 # Installation
 
 
