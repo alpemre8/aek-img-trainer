@@ -83,8 +83,8 @@ Example usage:
 
 ```python
 model.savexml(
-    pth_path="enfet.pth",
-    output_path="enfet.xml",
+    pth_path="efnet.pth",
+    output_path="efnet.xml",
     class_number=16,
     model_name="efficientnet_b0"
 )

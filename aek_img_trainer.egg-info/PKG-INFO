@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: aek-img-trainer
-Version: 0.5.1
+Version: 0.5.2
 Summary: Image classification trainer using OpenCV and timm
 Author: Alp Emre Karaahmet
 Author-email: alpemrekaraahmet@gmail.com
@@ -109,8 +109,8 @@ Example usage:
 
 ```python
 model.savexml(
-    pth_path="enfet.pth",
-    output_path="enfet.xml",
+    pth_path="efnet.pth",
+    output_path="efnet.xml",
     class_number=16,
     model_name="efficientnet_b0"
 )
